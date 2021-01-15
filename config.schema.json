@@ -1,5 +1,5 @@
 {
-  "pluginAlias": "ExampleHomebridgePlugin",
+  "pluginAlias": "homebridge-rancilio",
   "pluginType": "platform",
   "singular": true,
   "schema": {
