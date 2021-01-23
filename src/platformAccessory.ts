@@ -6,7 +6,7 @@ import { HomebridgeEsp8266RancilioPlatform } from './platform';
 
 
 interface StatusPayload {
-  speed?: number;
+  // speed?: number;
   power?: boolean;
 }
 
@@ -54,11 +54,11 @@ export class HomebridgeEsp8266RancilioAccessory {
     this.service.getCharacteristic(this.platform.Characteristic.Active)
       .on('set', this.setActive.bind(this));
 
-    this.service.getCharacteristic(this.platform.Characteristic.RotationSpeed)
-      .setProps({
-        minStep: 25,
-      })
-      .on('set', this.setRotationSpeed.bind(this));
+    // this.service.getCharacteristic(this.platform.Characteristic.RotationSpeed)
+    //   .setProps({
+    //     minStep: 25,
+    //   })
+    //   .on('set', this.setRotationSpeed.bind(this));
   }
 
   // parse events from the garage door controller
@@ -73,9 +73,9 @@ export class HomebridgeEsp8266RancilioAccessory {
       }
     }
 
-    if (payload.speed !== undefined) {
-      this.service.updateCharacteristic(this.platform.Characteristic.RotationSpeed, payload.speed);
-    }
+    // if (payload.speed !== undefined) {
+    //   this.service.updateCharacteristic(this.platform.Characteristic.RotationSpeed, payload.speed);
+    // }
   }
 
   setActive(value: CharacteristicValue, callback: CharacteristicSetCallback) {
@@ -86,19 +86,19 @@ export class HomebridgeEsp8266RancilioAccessory {
 
     callback();
     this.platform.log.debug('Calling "Set Active":', value);
-    const speed = this.service.getCharacteristic(this.platform.Characteristic.RotationSpeed).value;
-    this.socket.sendJson({ power: value, speed: speed || 25 });
+    // const speed = this.service.getCharacteristic(this.platform.Characteristic.RotationSpeed).value;
+    this.socket.sendJson({ power: value});
   }
 
-  setRotationSpeed(value: CharacteristicValue, callback: CharacteristicSetCallback) {
-    if (!this.socket.isConnected()) {
-      this.platform.log.error(`Rancilio Not Connected - ${this.config.host}`);
-      return callback(new Error('Rancilio Not Connected'));
-    }
+  // setRotationSpeed(value: CharacteristicValue, callback: CharacteristicSetCallback) {
+  //   if (!this.socket.isConnected()) {
+  //     this.platform.log.error(`Rancilio Not Connected - ${this.config.host}`);
+  //     return callback(new Error('Rancilio Not Connected'));
+  //   }
 
-    callback();
-    this.platform.log.debug('Calling "Set Rotation Speed":', value);
-    this.socket.sendJson({ speed: value });
-  }
+  //   callback();
+  //   this.platform.log.debug('Calling "Set Rotation Speed":', value);
+  //   this.socket.sendJson({ speed: value });
+  // }
 
 }

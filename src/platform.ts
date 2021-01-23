@@ -56,7 +56,7 @@ export class HomebridgeEsp8266RancilioPlatform implements DynamicPlatformPlugin 
   }
 
   foundAccessory(service) {
-    if (service.txt.type && service.txt.type === 'Rancilio') {
+    if (service.txt.type && service.txt.type === 'rancilio') {
       const UUID = this.api.hap.uuid.generate(service.txt.mac);
       const host = service.host;
       const accessoryConfig = { host, port: service.port, name: service.name, serial: service.txt.mac };
