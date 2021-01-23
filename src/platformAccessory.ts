@@ -6,7 +6,6 @@ import { HomebridgeEsp8266RancilioPlatform } from './platform';
 
 
 interface StatusPayload {
-  // speed?: number;
   power?: boolean;
 }
 
@@ -49,16 +48,11 @@ export class HomebridgeEsp8266RancilioAccessory {
       .setCharacteristic(this.platform.Characteristic.SerialNumber, this.config.serial);
 
     // create service
-    this.service = this.accessory.getService(this.platform.Service.Relay) || this.accessory.addService(this.platform.Service.Relay);
+    this.service = this.accessory.getService(this.platform.Service.Fanv2) || this.accessory.addService(this.platform.Service.Fanv2);
 
     this.service.getCharacteristic(this.platform.Characteristic.Active)
-      .on('set', this.setActive.bind(this));
-
-    // this.service.getCharacteristic(this.platform.Characteristic.RotationSpeed)
-    //   .setProps({
-    //     minStep: 25,
-    //   })
-    //   .on('set', this.setRotationSpeed.bind(this));
+      .on('set', this.setActive.bind(this))
+      .on('get', this.getActive.bind(this));
   }
 
   // parse events from the garage door controller
@@ -72,10 +66,6 @@ export class HomebridgeEsp8266RancilioAccessory {
         this.service.updateCharacteristic(this.platform.Characteristic.Active, this.platform.Characteristic.Active.INACTIVE);
       }
     }
-
-    // if (payload.speed !== undefined) {
-    //   this.service.updateCharacteristic(this.platform.Characteristic.RotationSpeed, payload.speed);
-    // }
   }
 
   setActive(value: CharacteristicValue, callback: CharacteristicSetCallback) {
@@ -86,19 +76,17 @@ export class HomebridgeEsp8266RancilioAccessory {
 
     callback();
     this.platform.log.debug('Calling "Set Active":', value);
-    // const speed = this.service.getCharacteristic(this.platform.Characteristic.RotationSpeed).value;
     this.socket.sendJson({ power: value});
   }
 
-  // setRotationSpeed(value: CharacteristicValue, callback: CharacteristicSetCallback) {
-  //   if (!this.socket.isConnected()) {
-  //     this.platform.log.error(`Rancilio Not Connected - ${this.config.host}`);
-  //     return callback(new Error('Rancilio Not Connected'));
-  //   }
+  getActive(callback: CharacteristicSetCallback) {
+    if (!this.socket.isConnected()) {
+      this.platform.log.error(`Rancilio Not Connected - ${this.config.host}`);
+      return callback(new Error('Rancilio Not Connected'));
+    }
 
-  //   callback();
-  //   this.platform.log.debug('Calling "Set Rotation Speed":', value);
-  //   this.socket.sendJson({ speed: value });
-  // }
-
+    callback();
+    this.platform.log.debug('Calling "Get Active":');
+    this.socket.sendJson({ status: 1});
+  }
 }
